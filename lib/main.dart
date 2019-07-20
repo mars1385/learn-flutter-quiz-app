@@ -1,8 +1,8 @@
 //import
 import 'package:flutter/material.dart';
 
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './result.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,27 +16,49 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   //state
   var _questionIndex = 0;
-  final questions = const [
+  var _totalScore = 0;
+  final _questions = const [
     {
-      'question': 'What\'s your favorate color?',
-      'answer': ['Black', 'Red', 'White', 'Green']
+      'question': 'What\'s your favorite color?',
+      'answer': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Red', 'score': 5},
+        {'text': 'Green', 'score': 3},
+        {'text': 'White', 'score': 1},
+      ],
     },
     {
-      'question': 'What\'s your favorate animal?',
-      'answer': ['Rabbit', 'Snake', 'Lion', 'Elephant']
+      'question': 'What\'s your favorite animal?',
+      'answer': [
+        {'text': 'Rabbit', 'score': 3},
+        {'text': 'Snake', 'score': 11},
+        {'text': 'Elephant', 'score': 5},
+        {'text': 'Lion', 'score': 9},
+      ],
     },
     {
-      'question': 'Who\'s your favorate instrucot?',
-      'answer': ['Brad', 'Brad', 'Brad', 'Brad']
-    }
+      'question': 'Who\'s your favorite instructor?',
+      'answer': [
+        {'text': 'Max', 'score': 1},
+        {'text': 'Max', 'score': 1},
+        {'text': 'Max', 'score': 1},
+        {'text': 'Max', 'score': 1},
+      ],
+    },
   ];
   //methods
-  void _answerQuestion() {
+  void _answerQuestion(int score) {
+    _totalScore += score;
     setState(() {
       _questionIndex++;
     });
-    if (_questionIndex < questions.length) {}
-    print('yse');
+  }
+
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
   }
 
   //widget
@@ -48,15 +70,12 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('My First App'),
         ),
-        body: Column(
-          children: <Widget>[
-            Question(questions[_questionIndex]['question']),
-            ...(questions[_questionIndex]['answer'] as List<String>)
-                .map((answer) {
-              return Answer(_answerQuestion, answer);
-            }).toList(),
-          ],
-        ),
+        body: _questionIndex < _questions.length
+            ? Quiz(
+                questions: _questions,
+                questionIndex: _questionIndex,
+                answerQuestion: _answerQuestion)
+            : Result(_totalScore, _resetQuiz),
       ),
     );
   }
